@@ -40,8 +40,9 @@ $.each(graph.nodes, function(i, node) {
     return (Math.pow(nd.x - node.x,2) + Math.pow(nd.y - node.y,2)) < (CONNECTION_RADIUS*CONNECTION_RADIUS);
   });
 
+
   $.each(node.within_range, function(i, other_node) {
-    if (other_node.id != node.id && Math.random()>0.8) {
+    if (other_node.id != node.id) {
       var distance = function(x1,y1,x2,y2) {
         return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
       }
@@ -92,14 +93,16 @@ function draw(step) {
         //ctx.fillText("ID: "+node.id, centerX+10, centerY+36)
       }
     });
-    for (var i in graph.edges) {
-      var node_attrs = graph.nodes[i];
-      var endpoints = graph.edges[i].endpoints;
+    for (var i = 0; i < graph.edges.length; i++) {
+      var edge = graph.edges[i];
+      var node = edge.a;
+      var neighbors = node.neighbors();
       ctx.lineWidth = 1;
-      for (var ep in endpoints) {
+      for (var n = 0; n < neighbors.length; n++) {
+        var neighbor = neighbors[n];
         ctx.beginPath();
-        ctx.moveTo(node_attrs.x, node_attrs.y);
-        ctx.lineTo(endpoints[ep].neighbor.x, endpoints[ep].neighbor.y);
+        ctx.moveTo(node.x, node.y);
+        ctx.lineTo(neighbor.x, neighbor.y);
         ctx.stroke();
       }
     }

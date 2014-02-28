@@ -1,9 +1,9 @@
 var GRJS = GRJS || {};
 (function(){
-  var CURRENT_NODE_ID = 0;
+  var NODE_ID_COUNT = 0;
 
   GRJS.Node = function(name, value, attrs, graph) {
-    this.id = CURRENT_NODE_ID++;
+    this.id = NODE_ID_COUNT++;
     this.name = name || ("Node"+this.id);
     this.value = value;
     this.graph = graph;
@@ -16,8 +16,11 @@ var GRJS = GRJS || {};
 
   GRJS.Node.prototype.neighbors = function() {
     var ep_array = [];
-    for (var ep in this.graph.edges[this.id].endpoints) {
-      ep_array.push(this.graph.edges[this.id].endpoints[ep].neighbor)
+    for (var i = 0; i < this.graph.edges.length; i++) {
+      var edge = this.graph.edges[i];
+      if (edge.a === this) {
+        ep_array.push(edge.b);
+      }
     }
     return ep_array;
   };
@@ -27,16 +30,15 @@ var GRJS = GRJS || {};
 
   GRJS.Graph = function(name) {
     this.name = (name || 'Graph');
-    this.nodes = {};
-    this.edges = {};
+    this.nodes = [];
+    this.edges = [];
   };
 
   // Every node has a name and value, and is assigned an ID which it uses for lookup
   // Nodes can also have any amount of custom data
   GRJS.Graph.prototype.addNode = function(name, value, attrs) {
     var new_node = new GRJS.Node(name.toString(), value, attrs, this);
-    this.nodes[new_node.id] = new_node;
-    this.edges[new_node.id] = {origin: new_node, endpoints:{}, attrs: {}};
+    this.nodes.push(new_node);
     return new_node;
   };
 
@@ -60,70 +62,95 @@ var GRJS = GRJS || {};
     }
   };
 
-  // findNode take a string or an object as an argument
-  // If a the argument is a string, the node is found by name
-  // If the argument is an object, return all nodes that match the attributes provided
-  // Functions can be provided as comparators for attributes as well
+  /**
+   * @param selector {String, Function, Object, GRJS.Node} selector can be any of these types
+   * @return {Array} list of nodes found
+  */
   GRJS.Graph.prototype.findNodes = function(selector) {
-    var self = this;
-    var findByName = function(name) {
+    // allow functions to be called with the node or node selector
+    if (selector instanceof GRJS.Node) {
+      return [selector];
+    }
+
+    var self = this; //inner functions have scope of window?
+    function findByName(name) {
       var matching_nodes = [];
-      for (var id in self.nodes) {
-        if (self.nodes[id].name == name) {
-          matching_nodes.push(self.nodes[id]);
+      for (var i = 0; i < self.nodes.length; i++) {
+        if (self.nodes[i].name == name) {
+          matching_nodes.push(self.nodes[i]);
         }
       }
     };
-    var findByFunction = function(finder) {
+    function findByFunction(finder) {
       var matching_nodes = []
-      for (var node_id in self.nodes) {
-        if (finder(self.nodes[node_id])) {
-          matching_nodes.push(self.nodes[node_id]);
+      for (var i = 0; i < self.nodes.length; i++) {
+        if (finder(self.nodes[i])) {
+          matching_nodes.push(self.nodes[i]);
         }
       }
       return matching_nodes;
     };
-    var findByAttributes = function(attributes) {
+    function findByAttributes(attributes) {
       var matching_nodes = [];
-      for (var node_id in self.nodes) {
+      for (var i = 0; i < self.nodes.length; i++) {
         var all_attributes_matching = true;
         for (attr in attributes) {
-          all_attributes_matching = self.nodes[node_id][attr] == attributes[attr];
+          all_attributes_matching = self.nodes[i][attr] == attributes[attr];
           if (!all_attributes_matching) { break; }
         }
         if (all_attributes_matching) {
-          matching_nodes.push(self.nodes[node_id]);
+          matching_nodes.push(self.nodes[i]);
         }
       }
       return matching_nodes;
     };
 
-    var node;
+    var nodes;
+    // Delegate to finders by selector type
     switch(GRJS.Utility.type(selector)) {
       case 'string':
-        node = findByName(selector);
+        nodes = findByName(selector);
         break;
       case 'function':
-        node = findByFunction(selector);
+        nodes = findByFunction(selector);
         break;
       case 'object':
-        node = findByAttributes(selector);
+        nodes = findByAttributes(selector);
         break;
       default:
-        node = false;
+        nodes = [];
     };
-    return node;
+    return nodes;
   };
 
+  /**
+   * @param selector {String, Function, Object, GRJS.Node} selector can be any of these types
+   * @return {GRJS.Node} uses findNodes then pulls the first or only result
+  */
   GRJS.Graph.prototype.findNode = function(selector) {
-    return this.findNodes(selector)[0];
+    var selection = this.findNodes(selector);
+    return !!selection.length ? selection[0] : [];
   };
 
-  GRJS.Graph.prototype.addEdge = function(node_1, node_2, weight, attrs) {
-    this.edges[node_1.id].endpoints[node_2.id] = {neighbor: node_2, weight: weight};
-    this.edges[node_2.id].endpoints[node_1.id] = {neighbor: node_1, weight: weight};
-    this.edges[node_2.id].endpoints[node_1.id].attrs = attrs;
-    this.edges[node_1.id].endpoints[node_2.id].attrs = attrs;
+  /**
+   * @param node_1 {String, Object, Function, GRJS.Node} node selectors
+   * @param node_2 {String, Object, Function, GRJS.Node} ditto
+   * @param value [{Number}=1] value will be the distance, weight, or difficulty of edge traversal
+   * @param attrs [{Object}={}] object of custrom attributes
+  */
+  GRJS.Graph.prototype.addEdge = function(node_1, node_2, value, attrs) {
+    value = (typeof value !== 'undefined' ? value : 1);
+    attrs = (typeof attrs !== 'undefined' ? attrs : {});
+    var from_node = this.findNode(node_1);
+    var to_node = this.findNode(node_2);
+    var edge = {
+      a: from_node,
+      b: to_node,
+      value: value,
+      attrs: attrs
+    };
+    this.edges.push(edge);
+    return edge;
   };
 
   // Implement A*
