@@ -26,4 +26,11 @@ Now that you have your graph object created, you can start adding nodes by calli
 `selector` can be a string, function, attribute object, or DGJS.Node object
 
 - If `selector` is a string, nodes will be found by name.
-- If `selector` is a function, the callback receives a node as its argument, any nodes that pass the condition will be returned: `graph.findNodes(function(node){ return node.value > 50 });` will only return nodes with a value of greater than 50.
+- If `selector` is a function, the callback receives a node as its argument. All nodes that pass the condition will be returned: 
+- ```javascript
+graph.findNodes(function(node){
+  return node.value > 50
+});
+```
+will only return nodes with a value of greater than 50.
+- 
