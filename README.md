@@ -27,10 +27,10 @@ Now that you have your graph object created, you can start adding nodes by calli
 
 - If `selector` is a string, nodes will be found by name.
 - If `selector` is a function, the callback receives a node as its argument. All nodes that pass the condition will be returned: 
-    ```javascript
-    graph.findNodes(function(node){
-      return node.value > 50
-    });
+    ```
+        graph.findNodes(function(node){
+            return node.value > 50
+        });
     ```
     will only return nodes with a value of greater than 50.
 - If `selector` is a node object, only that node will be returned. I know this doesn't sound useful here, but it is helpful internally so I suppose it's worth mentioning. 
