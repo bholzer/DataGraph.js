@@ -56,7 +56,7 @@ Adds an edge between two nodes
 ####graph.findPath(node1, node2);
 Finds the shortest path between two nodes.
 - `node1` is the node to start from, `node2` is the node to travel to.
-- Returns an array of nodes, ordered by which position they are in the path.
+- Returns an array of nodes, ordered by which position they are in the path. If no path was found, this will be an empty array.
 
 
 The node object
