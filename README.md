@@ -19,6 +19,6 @@ Now that you have your graph object created, you can start adding nodes by calli
 ```javascript
 graph.addNode(name, value, attributes);
 ```
-> `name` is a string, is just a custom name for the node
-> `value` is just a value for the node, can be of any type. Can be thought of as "weight"
-> `attributes` is an object of custom attributes for the node. Could be a coordinate pair, or anything else.
+- `name` is a string, it's just a custom name for the node
+- `value` is just a value for the node, can be of any type. Can be thought of as "weight"
+- `attributes` is an object of custom attributes for the node. Could be a coordinate pair, or anything else.
