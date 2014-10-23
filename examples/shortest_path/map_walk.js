@@ -1,4 +1,4 @@
-var graph = new GRJS.Graph('PathFind');
+var graph = new DGJS.Graph('PathFind');
 // This test generates nodes in random locations and connects them
 // to nodes that fall within the specified radius
 
@@ -97,6 +97,7 @@ function draw(step) {
       for (var n = 0; n < neighbors.length; n++) {
         var neighbor = neighbors[n];
         ctx.beginPath();
+        ctx.lineWidth = 1;
         ctx.moveTo(node.x, node.y);
         ctx.lineTo(neighbor.x, neighbor.y);
         ctx.stroke();
