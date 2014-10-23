@@ -10,34 +10,30 @@ var NODE_RADIUS = 5;
 var PATH = [];
 
 var map = [['.','.','.','.','.','.','.','.','.','.','.','.','.','.','*',],
-  	       ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',],
+  	   ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',],
            ['.','.','.','.','.','-','-','-','-','-','-','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
-           ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
-           ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
-           ['.','.','.','.','.','.','.','.','.','.','-','.','.','.','.',],
+           ['.','.','.','.','.','-','.','.','.','.','-','.','.','.','.',],
+           ['.','.','.','.','.','-','.','.','.','.','-','.','.','.','.',],
+           ['.','.','.','.','.','-','-','-','-','-','-','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',],
            ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',]];
 
-for (var y = 0; y < map.length; y++) {
-  for (var x = 0; x < map[y].length; x++) {
-    var node_data = {
-      x: x*55,
-      y: y*55
-    }
-    if (map[y][x] != '-') {
-      graph.addNode(x+y, 0, node_data, graph);
-    }
+for (var x = 0; x < 50; x++) {
+  var node_data = {
+    x: Math.floor(Math.random()*(WIDTH-10)),
+    y: Math.floor(Math.random()*(HEIGHT-10))
   }
+  graph.addNode(x, 0, node_data, graph);
 }
 
 $.each(graph.nodes, function(i, node) {
   node.within_range = graph.findNodes(function(nd){
-    return (Math.pow(nd.x - node.x,2) + Math.pow(nd.y - node.y,2)) < (CONNECTION_RADIUS*CONNECTION_RADIUS);
+    return (Math.abs(nd.x-node.x) < 200) && (Math.abs(nd.y-node.y) < 200);
   });
 
 
@@ -86,18 +82,18 @@ function draw(step) {
       ctx.strokeStyle = '#003300';
       ctx.stroke();
       if (DISPLAY_NODE_COORD) {
-        ctx.font = "bold 18px sans-serif";
+        ctx.font = "bold 12px sans-serif";
         ctx.fillStyle = 'black';
         // ctx.fillText("X: "+centerX, centerX+10, centerY)
         // ctx.fillText("Y: "+centerY, centerX+10, centerY+18)
-        //ctx.fillText("ID: "+node.id, centerX+10, centerY+36)
+        ctx.fillText("ID: "+node.id, centerX+5, centerY+10)
       }
     });
     for (var i = 0; i < graph.edges.length; i++) {
       var edge = graph.edges[i];
       var node = edge.a;
       var neighbors = node.neighbors();
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 2;
       for (var n = 0; n < neighbors.length; n++) {
         var neighbor = neighbors[n];
         ctx.beginPath();

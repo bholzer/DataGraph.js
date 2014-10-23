@@ -18,8 +18,8 @@ var GRJS = GRJS || {};
     var ep_array = [];
     for (var i = 0; i < this.graph.edges.length; i++) {
       var edge = this.graph.edges[i];
-      if (edge.a === this) {
-        ep_array.push(edge.b);
+      if (edge.a === this || edge.b === this) {
+        ep_array.push(edge.a === this ? edge.b : edge.a);
       }
     }
     return ep_array;
@@ -34,8 +34,11 @@ var GRJS = GRJS || {};
     this.edges = [];
   };
 
-  // Every node has a name and value, and is assigned an ID which it uses for lookup
-  // Nodes can also have any amount of custom data
+  /**
+   * @param name {String} Name of the node
+   * @param value {Object} value can be of any type
+   * @params attrs {Object} Custom data to apply to the node
+  */
   GRJS.Graph.prototype.addNode = function(name, value, attrs) {
     var new_node = new GRJS.Node(name.toString(), value, attrs, this);
     this.nodes.push(new_node);
@@ -153,21 +156,26 @@ var GRJS = GRJS || {};
     return edge;
   };
 
-  // Implement A*
+  /**
+   * A* Algorithm
+   * TODO: Add heuristic
+   * @param start_node {String, Object, Function, GRJS.Node} node selectors
+   * @param end_node   {String, Object, Function, GRJS.Node} node selectors
+  */
   GRJS.Graph.prototype.findPath = function(start_node, end_node) {
-    var nodes = (function(context) {
-      var built_nodes = {};
-      for (var id in context.nodes) {
-        var $id = parseInt(id);
-        built_nodes[$id] = {
-          f: 0,
-          g: 0,
-          h: 0,
-          id: $id
-        };
-      }
-      return built_nodes;
-    })(this);
+    start_node = this.findNode(start_node);
+    end_node = this.findNode(end_node);
+
+    // Clone the node list for scorekeeping
+    var nodes = [];
+    for (var i = 0; i < this.nodes.length; i++) {
+      var clone_and_score = _.extend({
+        f: 0,
+        g: 0,
+        h: 0
+      }, this.nodes[i]);
+      nodes.push(clone_and_score);
+    }
 
     var closed_list = {};    // Nodes already evaluated
     var open_list = {};      // Tentative set of nodes
@@ -206,8 +214,13 @@ var GRJS = GRJS || {};
           // Already dismissed this node, skip it
           continue;
         }
-        var edge_to_traverse = this.edges[current_node.id].endpoints[neighbor.id]
-        var g_score = current_node.g+edge_to_traverse.weight;
+        var edge_to_traverse;
+        for (var e = 0; e < this.edges.length; e++) {
+          if (this.edges[e].a.id == current_node.id && this.edges[e].b.id == neighbor.id) {
+            edge_to_traverse = this.edges[e];
+          }
+        }
+        var g_score = current_node.g+edge_to_traverse.value;
         var is_best_g = false;
         if (!open_list[neighbor.id]) {
           // First time hitting this node
@@ -265,6 +278,14 @@ GRJS.Utility = GRJS.Utility || {};
       }
       return size;
     }
+  };
+  GRJS.Utility.extend = function() {
+    for (var i=1; i<arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (arguments[i].hasOwnProperty(key)) { arguments[0][key] = arguments[i][key] }
+      }
+    }
+    return arguments[0];
   };
   window._ = GRJS.Utility;
 })();
