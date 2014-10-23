@@ -16,6 +16,7 @@ The graph object
 
 Now that you have your graph object created, you can start adding nodes by calling the `addNode` method.
 
+###graph.addNode()
 ```javascript
 graph.addNode(name, value, attributes);
 ```
