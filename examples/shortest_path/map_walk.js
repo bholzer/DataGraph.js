@@ -28,7 +28,7 @@ for (var x = 0; x < 50; x++) {
     x: Math.floor(Math.random()*(WIDTH-10)),
     y: Math.floor(Math.random()*(HEIGHT-10))
   }
-  graph.addNode(x, 0, node_data, graph);
+  graph.addNode(x, 0, node_data);
 }
 
 $.each(graph.nodes, function(i, node) {
