@@ -27,6 +27,16 @@ To make the graph useful, you need to add some nodes!
 - `attributes` is an optional object of custom attributes for the node. Could be a coordinate pair, or anything else.
 - Returns the newly created node
 
+```javascript
+// Add 10 nodes with random x and y data
+for (var x = 0; x < 10; x++) {
+  graph.addNode("Node", 0, {
+    x: Math.random(),
+    y: Math.random()
+  });
+}
+```
+
 
 ####graph.findNodes(selector);
 `selector` can be a string, function, attribute object, or DGJS.Node object. These same selectors are used to find nodes in other methods as well.
