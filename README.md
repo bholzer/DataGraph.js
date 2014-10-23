@@ -24,7 +24,7 @@ To make the graph useful, you need to add some nodes!
 ###graph.addNode(name, value, attributes);
 - `name` is a string, it's just a custom name for the node. Multiple nodes can have the same name.
 - `value` is just a value for the node, can be of any type. Can be thought of as "weight".
-- `attributes` is an object of custom attributes for the node. Could be a coordinate pair, or anything else.
+- `attributes` is an optional object of custom attributes for the node. Could be a coordinate pair, or anything else.
 - Returns the newly created node
 
 
@@ -50,11 +50,28 @@ Uses `findNodes()` internally and just returns the first result.
 Adds an edge between two nodes
 - Nodes 1 and 2 are the two nodes to connect. These can be either be a node selector or the node itself.
 - `value` is the weight, distance, or difficulty of traversal.
-- `attributes` is an object of custom attributes for the edge.
+- `attributes` is an optional object of custom attributes for the edge.
 - Returns the newly added edge.
 
 ###graph.findPath(node1, node2);
-Finds the shortest path between nodes.
+Finds the shortest path between two nodes.
 - `node1` is the node to start from, `node2` is the node to travel to.
 - Returns an array of nodes, ordered by which position they are in the path.
 
+
+The node object
+---------------
+
+If you need to create a node object manually:
+
+```javascript
+var node = new DGJS.Node(name, value, attributes, graph);
+```
+
+- `name` is a string name for your node. Multiple nodes can have the same name.
+- `value` is an arbritrary value for the node, can be of any type.
+- `attributes` is an optional object of custom attributes for the node.
+- `graph` is the optional graph object you want the node to be added to. 
+
+###node.neighbors();
+- Returns an array of nodes this node is connected to by an edge.
