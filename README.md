@@ -20,6 +20,7 @@ Now that you have your graph object created, you can start adding nodes by calli
 - `name` is a string, it's just a custom name for the node. Multiple nodes can have the same name.
 - `value` is just a value for the node, can be of any type. Can be thought of as "weight".
 - `attributes` is an object of custom attributes for the node. Could be a coordinate pair, or anything else.
+- Returns the newly created node
 
 
 ###graph.findNodes(selector);
@@ -38,4 +39,11 @@ Now that you have your graph object created, you can start adding nodes by calli
 - If `selector` is a node object, only that node will be returned. I know this doesn't sound useful here, but it is helpful internally so I suppose it's worth mentioning.
 
 ###graph.findNode(selector);
-    Uses `findNodes()` internally and just returns the first result;
+Uses `findNodes()` internally and just returns the first result;
+
+###graph.addEdge(node1, node2, value, attributes);
+Adds an edge between two nodes
+- Nodes 1 and 2 are the two nodes to connect.
+- `value` is the weight, distance, or difficulty of traversal
+- `attributes` is an object of custom attributes for the edge.
+- Returns the newly added edge.
