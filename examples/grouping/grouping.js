@@ -2,7 +2,8 @@ var graph = new DGJS.Graph('RandomNetwork');
 // This test generates nodes in random locations and connects them
 // to nodes that fall within the specified radius
 
-var NODES_TO_GENERATE = 10;
+// default parameters
+var NODES_TO_GENERATE = 20;
 var CONNECTION_RADIUS = 200;
 var HEIGHT = window.innerHeight;
 var WIDTH = window.innerWidth;
