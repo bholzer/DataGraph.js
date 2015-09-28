@@ -18,7 +18,7 @@ for (var i = 0; i < NODES_TO_GENERATE; i++) {
   graph.addNode(i, 0, node_data, graph);
 }
 
-var distance - function(x1,y1,x2,y2) {
+var distance = function(x1,y1,x2,y2) {
   return Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2));
 }
 
